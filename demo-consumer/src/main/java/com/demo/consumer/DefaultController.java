@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController("/")
 public class DefaultController {
-    @Reference(check = false,version = "1.0.0")
+    @Reference(check = false,version = "1.0.0",cluster = "failfast",timeout = 6000)
     DemoService demoService;
 
     @RequestMapping("getPort")

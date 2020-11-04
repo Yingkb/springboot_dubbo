@@ -24,6 +24,9 @@ public class DemoProducerLoadBalance implements LoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> list, URL url, Invocation invocation) throws RpcException {
+        if (list.size() == 1) {
+            return list.get(0);
+        }
         List<Invoker<T>> lists = new ArrayList<>();
         for (Invoker<T> t : list) {
             lists.add(t);
@@ -37,32 +40,11 @@ public class DemoProducerLoadBalance implements LoadBalance {
             String producerSystem = next.getUrl().getParameter("system", "");
             if (Objects.equals(system, producerSystem)) {
                 return next;
-            } else if(Objects.equals(NAME,producerSystem)){
+            } else if (Objects.equals(NAME, producerSystem)) {
                 iterator.remove();
             }
         }
         return this.randomSelect(lists, url, invocation);
-    }
-
-    static int calculateWarmupWeight(int uptime, int warmup, int weight) {
-        int ww = (int) ((float) uptime / ((float) warmup / (float) weight));
-        return ww < 1 ? 1 : (ww > weight ? weight : ww);
-    }
-
-    protected int getWeight(Invoker<?> invoker, Invocation invocation) {
-        int weight = invoker.getUrl().getMethodParameter(invocation.getMethodName(), "weight", 100);
-        if (weight > 0) {
-            long timestamp = invoker.getUrl().getParameter("remote.timestamp", 0L);
-            if (timestamp > 0L) {
-                int uptime = (int) (System.currentTimeMillis() - timestamp);
-                int warmup = invoker.getUrl().getParameter("warmup", 600000);
-                if (uptime > 0 && uptime < warmup) {
-                    weight = calculateWarmupWeight(uptime, warmup, weight);
-                }
-            }
-        }
-
-        return weight >= 0 ? weight : 0;
     }
 
     /**
@@ -101,5 +83,26 @@ public class DemoProducerLoadBalance implements LoadBalance {
             }
         }
         return invokers.get(ThreadLocalRandom.current().nextInt(length));
+    }
+
+    static int calculateWarmupWeight(int uptime, int warmup, int weight) {
+        int ww = (int) ((float) uptime / ((float) warmup / (float) weight));
+        return ww < 1 ? 1 : (ww > weight ? weight : ww);
+    }
+
+    protected int getWeight(Invoker<?> invoker, Invocation invocation) {
+        int weight = invoker.getUrl().getMethodParameter(invocation.getMethodName(), "weight", 100);
+        if (weight > 0) {
+            long timestamp = invoker.getUrl().getParameter("remote.timestamp", 0L);
+            if (timestamp > 0L) {
+                int uptime = (int) (System.currentTimeMillis() - timestamp);
+                int warmup = invoker.getUrl().getParameter("warmup", 600000);
+                if (uptime > 0 && uptime < warmup) {
+                    weight = calculateWarmupWeight(uptime, warmup, weight);
+                }
+            }
+        }
+
+        return weight >= 0 ? weight : 0;
     }
 }

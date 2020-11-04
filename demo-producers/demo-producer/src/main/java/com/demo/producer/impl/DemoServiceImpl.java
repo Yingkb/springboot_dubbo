@@ -19,6 +19,11 @@ public class DemoServiceImpl implements DemoService {
 
     @Override
     public String getNotifyUrl() {
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return "====>>>>>调用服务端口："+port;
     }
 }
