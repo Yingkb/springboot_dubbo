@@ -1,5 +1,7 @@
 package com.demo.api;
 
+import com.demo.api.dto.ValidationParameter;
+
 /**
  * @author Yingkb
  * @version 1.0.0
@@ -9,6 +11,9 @@ package com.demo.api;
  */
 public interface DemoService {
 
-    String getNotifyUrl();
+    @interface GetNotifyUrl{}
+    String getNotifyUrl(ValidationParameter validationParameter);
+
+    String getApplicationName();
 
 }
