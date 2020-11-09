@@ -32,7 +32,7 @@ public class DemoProducerLoadBalance implements LoadBalance {
             lists.add(t);
         }
         //获取消费端参数
-        String system = invocation.getAttachment("system");
+        String system = invocation.getAttachment("system","PRE");
         System.out.println("====>>>>>>负载均衡:" + system);
         Iterator<Invoker<T>> iterator = lists.iterator();
         while (iterator.hasNext()) {

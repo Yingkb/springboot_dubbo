@@ -1,6 +1,9 @@
 package com.demo.api;
 
+import com.demo.api.dto.Person;
 import com.demo.api.dto.ValidationParameter;
+
+import java.util.List;
 
 /**
  * @author Yingkb
@@ -15,5 +18,12 @@ public interface DemoService {
     String getNotifyUrl(ValidationParameter validationParameter);
 
     String getApplicationName();
+
+
+    String getName(String name);
+
+    List<Person> getPersonList();
+
+    List<Person> getPersonParamter(List<Person> personList);
 
 }
